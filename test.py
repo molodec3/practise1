@@ -13,18 +13,15 @@ def test_inf_letter_count():
 
 
 def test_error_for_one_arg():
-    with pytest.raises(AttributeError):
-        process_reg_exp(reg_exp='*', letter='a')
+    assert process_reg_exp(reg_exp='*', letter='a') == 'ERROR'
 
 
 def test_error_for_two_args():
-    with pytest.raises(AttributeError):
-        process_reg_exp(reg_exp='a+', letter='a')
+    assert process_reg_exp(reg_exp='a+', letter='a') == 'ERROR'
 
 
 def test_final_error():
-    with pytest.raises(AttributeError):
-        process_reg_exp(reg_exp='ab+bc+', letter='a')
+    assert process_reg_exp(reg_exp='ab+bc+', letter='a') == 'ERROR'
 
 
 def test_with_epsilon():
@@ -34,3 +31,8 @@ def test_with_epsilon():
 def test_extra():
     assert process_reg_exp(reg_exp='aab.*.a.a.a.', letter='a') == 4  # a(ab)*aaa
     assert process_reg_exp(reg_exp='aaab..a+.b.b.b.', letter='a') == 3  # a(aab + a)bbbb
+
+
+def test_with_one_letter():
+    assert process_reg_exp(reg_exp='aa.a+', letter='a') == 2  # aa + a
+    assert process_reg_exp(reg_exp='aa.a+*', letter='a') == float('inf')  # (aa + a)*

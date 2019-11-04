@@ -53,7 +53,7 @@ def process_concat(first_state_set, second_state_set):
                 first_state_set['with_last'].letter_count + second_state_set['with_last'].letter_count, True
             )
 
-        if first_state_set.get('without_last') is not None and second_state_set.get('without_last'):
+        if first_state_set.get('without_last') is not None and second_state_set.get('without_last') is not None:
             if first_state_set['with_last'].letter_count + second_state_set['without_last'].letter_count > \
                     first_state_set['without_last'].letter_count:
                 current_states['without_last'] = SubstrState(
@@ -65,7 +65,7 @@ def process_concat(first_state_set, second_state_set):
                 )
         elif first_state_set.get('without_last') is not None:
             current_states['without_last'] = first_state_set['without_last']
-        else:
+        elif second_state_set.get('without_last') is not None:
             current_states['without_last'] = SubstrState(
                     first_state_set['with_last'].letter_count + second_state_set['without_last'].letter_count, False
             )
@@ -91,13 +91,13 @@ def process_reg_exp(reg_exp, letter):
         if element in OPERATIONS:
             if element == '*':
                 if len(letters_state) < 1:
-                    raise AttributeError('Incorrect reg exp')
+                    return 'ERROR'
                 result = process_star(letters_state.pop())
                 letters_state.append(result)
 
             else:
                 if len(letters_state) < 2:
-                    raise AttributeError('Incorrect reg exp')
+                    return 'ERROR'
                 current_state = None
                 second_states = letters_state.pop()
                 first_states = letters_state.pop()
@@ -111,7 +111,7 @@ def process_reg_exp(reg_exp, letter):
 
     final_max = 0
     if len(letters_state) != 1:
-        raise AttributeError('Incorrect reg exp')
+        return 'ERROR'
     else:
         state = letters_state.pop()
         for element in state.values():
@@ -123,4 +123,8 @@ def process_reg_exp(reg_exp, letter):
 
 if __name__ == '__main__':
     reg_exp, letter = input().split()
-    print(process_reg_exp(reg_exp, letter))
+    result = process_reg_exp(reg_exp, letter)
+    if result == float('inf'):
+        print('INF')
+    else:
+        print(result)
