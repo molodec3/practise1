@@ -1,17 +1,18 @@
 from collections import deque, namedtuple
 
 OPERATIONS = {'+', '*', '.'}
+ALPHABET = {'a', 'b', 'c', '1'}
 
 SubstrState = namedtuple('SubstrState', 'letter_count if_last_is_letter')
 
 
 def process_star(given_states):
     current_state = dict()
-    if given_states.get('without_last'):
+    if given_states.get('without_last') is not None:
         current_state['without_last'] = given_states['without_last']
 
     if given_states.get('with_last') is not None:
-        if given_states['with_last'] != 0:
+        if given_states['with_last'].letter_count != 0:
             current_state['with_last'] = SubstrState(float('inf'), True)
         else:
             current_state['with_last'] = SubstrState(0, True)
@@ -106,8 +107,10 @@ def process_reg_exp(reg_exp, letter):
                 elif element == '.':
                     current_state = process_concat(first_states, second_states)
                 letters_state.append(current_state)
-        else:
+        elif element in ALPHABET:
             add_letter(letters_state, element, letter)
+        else:
+            return 'ERROR'
 
     final_max = 0
     if len(letters_state) != 1:
